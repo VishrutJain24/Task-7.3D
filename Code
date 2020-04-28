@@ -9,7 +9,7 @@ ECHO = 24
 # initialise pins
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
-GPIO.setup(LED, GPIO.OUT)
+
 
 # wait for sensor to settle
 GPIO.output(TRIG, False)
