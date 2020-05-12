@@ -3,54 +3,85 @@ import time
 
 GPIO.setmode(GPIO.BCM)
 
-TRIG = 23
+TRIG = 18
 ECHO = 24
+LED = 2
+Regularity = 200
 
-# initialise pins
+# to initialize the pins
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
+GPIO.setup(LED, GPIO.OUT)
+pwmLED = GPIO.PWM(LED, Regularity)
 
-
-# wait for sensor to settle
+# waiting for sensor to settle 
 GPIO.output(TRIG, False)
-print("Waiting for sensor to settle")
+pwmLED.start(0)
 time.sleep(2)
 
 
-def SenseDistance():
-
-    # send pulse
-    GPIO.output(TRIG, True)
-    time.sleep(0.001)
+def DistanceMeasurement():
+    GPIO.output(TRIG, True) #sends pulse
+    time.sleep(0.00001)
     GPIO.output(TRIG, False)
 
     while (GPIO.input(ECHO) == 0):
         pulseStart = time.time()
-
     while (GPIO.input(ECHO) == 1):
         pulseEnd = time.time()
 
-    # calculate pulse duration
+    # for calculating the pulse duration
     pulseDuration = pulseEnd - pulseStart
     Distance = pulseDuration*17150
-    Distance = round(Distance, 2)
-    
+    Distance = round(Distance, 2)    
     return Distance
 
 
 # sense distance first off to get baseline
-InitialDistance = SenseDistance()
+StartingDistance = DistanceMeasurement()
 
-if (InitialDistance > 30):
-    print ("Object is at more than 30 cm")
+if (StartingDistance > 50):
+    print ("None object within 50cm")
     
-else:  
-    print ("Distance:", InitialDistance, " cm")
+else:
+    # change of duty cycle
+    pwmLED.ChangeDutyCycle(100 - (StartingDistance*2))
+    print ("Starting Distance:", StartingDistance, " cm")
+
+try:
+    while True:
+        # measuring of distance and send pulse
+        CurrentDistance = DistanceMeasurement()        
+
+        if (CurrentDistance > 50):
+            pwmLED.ChangeDutyCycle(0)
+            print "Distance:", CurrentDistance, "cm"
+                       
+        if (DistanceNow > 400):
+            print ("No objects within 4 meters")
+
+        
+        # something is within 0.5m
+        else:
+
+            if (CurrentDistance < (StartingDistance*0.9)):
+                print ("Object approaching!!!")      
+  
+            elif (CurrentDistance > (StartingDistance*1.1)):
+                print ("Object moving away"!!!)
+
+            pwmLED.ChangeDutyCycle(100 - (StartingDistance*2))
+            print ("Distance:", CurrentDistance, "cm")
+            StartingDistance = CurrentDistance
 
         time.sleep(1)
 
 
-except KeyboardInterrupt:   
+except KeyboardInterrupt:
     print ("Exit")
+
+except:
+    print ("Error")
+
 finally:
     GPIO.cleanup()
