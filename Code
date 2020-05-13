@@ -37,14 +37,13 @@ def DistanceMeasurement():
     return Distance
 
 
-# sense distance first off to get baseline
+
 StartingDistance = DistanceMeasurement()
 
 if (StartingDistance > 50):
     print ("None object within 50cm")
     
 else:
-    # change of duty cycle
     pwmLED.ChangeDutyCycle(100 - (StartingDistance*2))
     print ("Starting Distance:", StartingDistance, " cm")
 
@@ -61,7 +60,7 @@ try:
             print ("No objects within 4 meters")
 
         
-        # something is within 0.5m
+        
         else:
 
             if (CurrentDistance < (StartingDistance*0.9)):
