@@ -6,12 +6,14 @@ GPIO.setmode(GPIO.BCM)
 TRIG = 18
 ECHO = 24
 LED = 2
+Buzzer = 3
 Regularity = 200
 
 # to initialize the pins
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 GPIO.setup(LED, GPIO.OUT)
+GPIO.setup(Buzzer, GPIO.OUT)
 pwmLED = GPIO.PWM(LED, Regularity)
 
 # waiting for sensor to settle 
